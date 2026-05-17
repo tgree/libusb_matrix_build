@@ -1,0 +1,15 @@
+# Copyright (c) 2026 by Terry Greeniaus.
+# Build from project root directory with:
+#   docker build --platform linux/amd64 -t libusb_manylinux2014_x86_64 -f dockerfiles/Dockerfile_manylinux2014_x86_64 .
+# Run with:
+#   docker run --platform linux/amd64 -ti --rm --mount type=bind,source="$(pwd)",target=/mnt/bind-root libusb_manylinux2014_x86_64 <cmd goes here>
+FROM quay.io/pypa/manylinux2014_x86_64:latest AS dev-base
+
+# Do the build.
+COPY libusb /root/libusb
+RUN cd /root/libusb && ./autogen.sh --disable-udev
+RUN cd /root/libusb && make -j4
+
+# Create the bind-mount directory.
+RUN mkdir -p /mnt/bind-root
+WORKDIR /mnt/bind-root
