@@ -1,0 +1,19 @@
+# Copyright (c) 2026 by Terry Greeniaus.
+# Build from project root directory with:
+#   docker build --platform linux/arm/v7 -t libusb_debian_10_armv7l -f dockerfiles/Dockerfile_debian_10_armv7l .
+# Run with:
+#   docker run --platform linux/arm/v7 -ti --rm --mount type=bind,source="$(pwd)",target=/mnt/bind-root libusb_debian_10_armv7l <cmd goes here>
+FROM debian:10
+
+# Do the build.
+COPY libusb /root/libusb
+COPY debian_10_sources.list /etc/apt/sources.list
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    gcc make automake autoconf libtool m4
+RUN cd /root/libusb && ./autogen.sh --disable-udev
+RUN cd /root/libusb && make -j4
+
+# Create the bind-mount directory.
+RUN mkdir -p /mnt/bind-root
+WORKDIR /mnt/bind-root

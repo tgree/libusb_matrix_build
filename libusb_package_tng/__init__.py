@@ -49,8 +49,15 @@ def get_library_resource():
     # Linux otherwise.
     if 'arm64' in ARCH or 'aarch64' in ARCH:
         return 'libusb-linux-arm64-' + LIBUSB_VERS + '.so'
+    if 'armv7l' in ARCH:
+        lib, _ = platform.libc_ver()
+        if 'musl' in lib.lower():
+            return 'libusb-musl-armv7l-' + LIBUSB_VERS + '.so'
+        return 'libusb-debian-10-armv7l-' + LIBUSB_VERS + '.so'
     if 'x86_64' in ARCH or 'amd64' in ARCH:
         return 'libusb-linux-x86_64-' + LIBUSB_VERS + '.so'
+    if '386' in ARCH or '686' in ARCH:
+        return 'libusb-linux-i686-' + LIBUSB_VERS + '.so'
 
     # Can't find one.
     raise NoSuchLibraryException(

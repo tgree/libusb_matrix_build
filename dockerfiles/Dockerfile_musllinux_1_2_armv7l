@@ -1,0 +1,15 @@
+# Copyright (c) 2026 by Terry Greeniaus.
+# Build from project root directory with:
+#   docker build --platform linux/arm/v7 -t libusb_musllinux_1_2_armv7l -f dockerfiles/Dockerfile_musllinux_1_2_armv7l .
+# Run with:
+#   docker run --platform linux/arm/v7 -ti --rm --mount type=bind,source="$(pwd)",target=/mnt/bind-root libusb_musllinux_1_2_armv7l <cmd goes here>
+FROM quay.io/pypa/musllinux_1_2_armv7l:latest AS dev-base
+
+# Do the build.
+COPY libusb /root/libusb
+RUN cd /root/libusb && ./autogen.sh --disable-udev
+RUN cd /root/libusb && make -j4
+
+# Create the bind-mount directory.
+RUN mkdir -p /mnt/bind-root
+WORKDIR /mnt/bind-root
