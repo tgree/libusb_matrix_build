@@ -1,5 +1,5 @@
 MODULE      := libusb_package_tng
-MODULE_VERS := 1.0.29.1
+MODULE_VERS := 1.0.29.2
 MODULE_DEPS :=
 MODULES := \
 	setup.cfg \
