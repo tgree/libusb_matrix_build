@@ -17,7 +17,6 @@ def get_library_resource():
     '''
     # macOS
     if sys.platform == 'darwin':
-        # macOS.
         release, _, machine = platform.mac_ver()
         major, minor = release.split('.')[:2]
         major, minor = int(major), int(minor)
@@ -61,7 +60,7 @@ def get_library_resource():
 
     # Can't find one.
     raise NoSuchLibraryException(
-        'No Linux libusb_package_2 library for ARCH %s' % ARCH)
+        'No Linux libusb_package_tng library for ARCH %s' % ARCH)
 
 
 def find_library(candidate):
