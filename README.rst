@@ -32,7 +32,50 @@ libusb_package_tng has been tested on Raspbian 10 (armv7l), on fairly recent
 versions of macOS (both ARM and x86) and on fairly recent versions of Linux
 (Ubuntu 22+, only x86).  Neither the musllinux armv7l nor i686 builds have been
 tested since I don't have access to suitable hardware and older versions of
-Linux have not been tested at all.
+Linux have not been tested at all.  It has also been tested on Windows 11 build
+22631, 64-bit x86.  It isn't immediately clear if the Windows .dlls provided by
+the libusb project include ARM support.
+
+
+Installing
+==========
+The easiest way to install is via pip::
+
+    python3 -m pip install libusb_package_tng
+
+You can also install from a copy of the repository using 'make install' on a
+macOS or Linux system.
+
+
+API
+===
+The main purpose of libusb_package_tng is to provide the find_library() API
+required by pyusb.  We embed the various libusb builds directly in our package
+and pass the correct one out as the result of find_library().  Here is a sample
+script to use libusb_package_tng to provide the back-end for pyusb::
+
+    import usb.backend.libusb1
+    import usb.core
+    import libusb_package_tng
+
+    be = usb.backend.libusb1.get_backend(
+            find_library=libusb_package_tng.find_library)
+    assert be is not None
+    print(list(usb.core.find(find_all=True, backend=be)))
+
+If you want to fall back to checking for an OS copy of libusb in the event that
+libusb_package_tng doesn't have a version that works on your system, you could
+do the following instead::
+
+    be = usb.backend.libusb1.get_backend(
+            find_library=libusb_package_tng.find_library)
+    if be is None:
+        be = usb.backend.libusb1.get_backend()
+    assert be is not None
+
+The downside to this is that libusb_package_tng guarantees the version of the
+libusb library that will be used, while the OS version could be something much
+older.
 
 
 Building
